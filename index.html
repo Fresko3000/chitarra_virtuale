@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chitarra Virtuale</title> 
-    <!-- Aggiunta favicon -->
+    <title>Chitarra Virtuale</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎸</text></svg>">
     <style>
         /* Stili Base e App Principale */
@@ -84,6 +83,7 @@
         .caged-container { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; margin-top: 20px; }
         .scale-dot { position: absolute; top: 50%; left: 50%; width: 28px; height: 28px; background: #3b82f6; border-radius: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.85rem; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); border: 2px solid white; z-index: 4; cursor: default; }
         .scale-dot.root-note { background-color: #ef4444; border-color: #fefce8;}
+        .scale-dot.blue-note { background-color: #111827; border-radius: 4px; width: 24px; height: 24px; border: 2px solid #6b7280;}
         .guide-container { background: #f0f9ff; border: 1px solid #e0f2fe; color: #0c4a6e; border-radius: 10px; padding: 20px; margin-top: 25px; max-width: 800px; margin-left: auto; margin-right: auto; }
         .guide-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
         .guide-container h3 { font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; }
@@ -98,6 +98,8 @@
         .tab-copy-button { background: #6b7280; }
         .tab-copy-button:active { background: #4b5563; }
         .chord-actions { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 15px; }
+        .blues-note-button { width: 100%; max-width: 400px; margin: 10px auto 20px; display: block; padding: 12px 20px; background: #e0e7ff; color: #3730a3; border: 2px solid #c7d2fe; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-weight: 600; font-size: 1rem; }
+        .blues-note-button.active { background: #6d28d9; color: white; border-color: #5b21b6; }
         @media (min-width: 768px) { .title { font-size: 2.5rem; } .subtitle { font-size: 1.2rem; } .chord-name { font-size: 2.5rem; } .results-container { flex-wrap: nowrap; } }
         #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #1c1917; display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 0.8s ease-out; padding: 15px; }
         #splash-screen.hidden { opacity: 0; pointer-events: none; }
@@ -187,6 +189,7 @@
                             </select>
                         </div>
                     </div>
+                    <button id="blues-note-toggle" class="blues-note-button">🎸 Aggiungi un po' di Blues</button>
                     <div class="fretboard-container">
                         <div class="fretboard" id="caged-fretboard-root"></div>
                     </div>
@@ -202,17 +205,13 @@
                             <li>🔴 <strong>Pallini Rossi (Tonica):</strong> Indicano la nota <strong>DO</strong>, che è la nota fondamentale (la "tonica") della scala. È la tua "casa base" in ogni box.</li>
                             <li>🔵 <strong>Pallini Blu:</strong> Indicano tutte le altre note della scala di DO Maggiore (Re, Mi, Fa, Sol, La, Si).</li>
                         </ul>
-                        <h3 style="margin-top: 25px;">La Scala Pentatonica</h3>
+                        <h3 style="margin-top: 25px;">La Scala Pentatonica (e la Blue Note)</h3>
                         <h4>Cos'è e perché è importante?</h4>
                         <p>La scala pentatonica (dal greco "penta", cinque) è una scala composta da sole 5 note. È la scala più usata in assoluto nel rock, nel blues, nel pop e in moltissimi altri generi per creare melodie e assoli. La sua forza sta nella semplicità: qualunque nota suoni, suonerà quasi sempre bene!</p>
                         <h4>Perché studiamo la Pentatonica di La Minore?</h4>
-                        <p>Abbiamo scelto la pentatonica di <strong>La minore</strong> (note: La, Do, Re, Mi, Sol) perché è la **minore relativa** della scala di Do maggiore. Questo significa che usa le stesse note della pentatonica di <strong>Do maggiore</strong> (note: Do, Re, Mi, Sol, La). Sono due facce della stessa medaglia! Imparando i 5 box di questa pentatonica, stai di fatto imparando due scale contemporaneamente, una con un sapore più malinconico (La minore) e una più allegro (Do maggiore).</p>
-                        <h4>Come leggere i diagrammi della pentatonica:</h4>
-                        <ul>
-                            <li><strong>Scala Visualizzata:</strong> Tutti i diagrammi mostrano la <strong>Pentatonica di La Minore</strong>.</li>
-                            <li>🔴 <strong>Pallini Rossi (Tonica):</strong> Indicano la nota <strong>LA</strong>, che è la nota fondamentale (la "tonica") della scala. È la nota che dà il nome alla scala e il tuo punto di riferimento.</li>
-                            <li>🔵 <strong>Pallini Blu:</strong> Indicano tutte le altre note della scala (Do, Re, Mi, Sol).</li>
-                        </ul>
+                        <p>Abbiamo scelto la pentatonica di <strong>La minore</strong> (note: La, Do, Re, Mi, Sol) perché è la **minore relativa** della scala di Do maggiore. Questo significa che usa le stesse note della pentatonica di <strong>Do maggiore</strong> (note: Do, Re, Mi, Sol, La). Sono due facce della stessa medaglia! Imparando i 5 box di questa pentatonica, stai di fatto imparando due scale contemporaneamente.</p>
+                        <h4>La Blue Note ⬛️</h4>
+                        <p>Cliccando sul pulsante <strong>"Aggiungi un po' di Blues"</strong>, ai 5 box della pentatonica di La minore verrà aggiunta la <strong>"blue note"</strong> ⬛ (la quinta diminuita, in questo caso un <strong>Re#</strong> o <strong>D#</strong>). Questa nota, con la sua caratteristica tensione, è l'ingrediente segreto che trasforma una semplice pentatonica nel suono inconfondibile del blues.</p>
                     </div>
                 </div>
             </div>
@@ -264,7 +263,7 @@
         </div>
         
         <footer class="page-footer">
-            <p>v.6.5 | Designed by Fresko | Powered by AI | 2025</p>
+            <p>v.7.2 | Designed by Fresko | Powered by AI | 2025</p>
         </footer>
     </div>
 
@@ -341,29 +340,56 @@
             penta_g_form: [{s:"E6",f:3},{s:"E6",f:5},{s:"A",f:3},{s:"A",f:5},{s:"D",f:2},{s:"D",f:5},{s:"G",f:2},{s:"G",f:5},{s:"B",f:3},{s:"B",f:5},{s:"E1",f:3},{s:"E1",f:5}]
         };
 
+        const BLUES_NOTE_POSITIONS = {
+            penta_e_form: [{s: "A", f: 6}, {s: "G", f: 8}],
+            penta_d_form: [{s: "E1", f: 11}, {s: "G", f: 8}, {s: "E6", f: 11}],
+            penta_c_form: [{s: "E1", f: 11}, {s: "E6", f: 11}, {s: "D", f: 13}],
+            penta_a_form: [{s: "D", f: 1}, {s: "B", f: 4}],
+            penta_g_form: [{s: "B", f: 4}, {s: "A", f: 6}]
+        };
+        
         function caged_createFretboard() {
             const root = document.getElementById('caged-fretboard-root');
             root.innerHTML = '';
-            const fretCount = 14; // Aumentato a 14 per visualizzare tutti i pattern
+            const fretCount = 14; 
             const header = document.createElement('div');
             header.className = 'fret-header';
             for (let f = 1; f <= fretCount; f++) { 
                 const num = document.createElement('div');
                 num.className = 'fret-number';
-                if ([3, 5, 7, 9, 12].includes(f)) { // Manteniamo i vecchi highlight per coerenza
+                if ([3, 5, 7, 9, 12].includes(f)) { 
                     num.classList.add('fret-number-highlight');
                 }
                 num.textContent = f;
                 header.appendChild(num);
             }
             root.appendChild(header);
-            strings.forEach((stringName, stringIndex) => { const stringRow = document.createElement('div'); stringRow.className = 'string-row'; const nameDiv = document.createElement('div'); nameDiv.className = 'string-name'; nameDiv.textContent = stringNames[stringIndex]; nameDiv.style.cursor = 'default'; nameDiv.id = `caged-string-name-${stringName}`; stringRow.appendChild(nameDiv); stringRow.appendChild(document.createElement('div')).className = 'nut'; for (let fretIndex = 1; fretIndex <= fretCount; fretIndex++) { const fretDiv = document.createElement('div'); fretDiv.className = 'fret'; fretDiv.style.cursor = 'default'; fretDiv.id = `caged-fret-${stringName}-${fretIndex}`; stringRow.appendChild(fretDiv); } root.appendChild(stringRow); });
+            strings.forEach((stringName, stringIndex) => { 
+                const stringRow = document.createElement('div'); 
+                stringRow.className = 'string-row'; 
+                const nameDiv = document.createElement('div'); 
+                nameDiv.className = 'string-name'; 
+                nameDiv.textContent = stringNames[stringIndex]; 
+                nameDiv.style.cursor = 'default'; 
+                nameDiv.id = `caged-string-name-${stringName}`; 
+                stringRow.appendChild(nameDiv); 
+                stringRow.appendChild(document.createElement('div')).className = 'nut'; 
+                for (let fretIndex = 1; fretIndex <= fretCount; fretIndex++) { 
+                    const fretDiv = document.createElement('div'); 
+                    fretDiv.className = 'fret'; 
+                    fretDiv.style.cursor = 'default'; 
+                    fretDiv.id = `caged-fret-${stringName}-${fretIndex}`; 
+                    stringRow.appendChild(fretDiv); 
+                } 
+                root.appendChild(stringRow); 
+            });
         }
         
-        function caged_drawScale(pattern, rootNote) {
+        function caged_drawScale(pattern, rootNote, showBluesNote = false, bluesPattern = null) {
             document.querySelectorAll('#caged-fretboard-root .scale-dot').forEach(dot => dot.remove());
             if (!pattern) return;
-            pattern.forEach(note => {
+            
+            const drawNote = (note, isBlueNote = false) => {
                 const { s: stringName, f: fretNumber } = note;
                 const targetElement = (fretNumber === 0) ? document.getElementById(`caged-string-name-${stringName}`) : document.getElementById(`caged-fret-${stringName}-${fretNumber}`);
                 if (targetElement) {
@@ -371,27 +397,57 @@
                     dot.className = 'scale-dot';
                     const noteName = getNoteAtFret(stringName, fretNumber);
                     dot.textContent = noteName;
-                    if (noteName === rootNote) dot.classList.add('root-note');
+                    
+                    if (isBlueNote) {
+                        dot.classList.add('blue-note');
+                    } else if (noteName === rootNote) {
+                        dot.classList.add('root-note');
+                    }
                     targetElement.appendChild(dot);
                 }
-            });
+            };
+            
+            pattern.forEach(note => drawNote(note, false));
+
+            if (showBluesNote && bluesPattern) {
+                bluesPattern.forEach(note => drawNote(note, true));
+            }
         }
         
         function caged_setup() {
             caged_createFretboard();
             const majorSelect = document.getElementById('caged-major-select');
             const pentatonicSelect = document.getElementById('caged-pentatonic-select');
+            const bluesToggle = document.getElementById('blues-note-toggle');
 
+            function updatePentatonicScale() {
+                const patternKey = pentatonicSelect.value;
+                if (!patternKey) {
+                    caged_drawScale(null);
+                    return;
+                }
+                const selectedPattern = CAGED_PENTATONIC_PATTERNS[patternKey];
+                const bluesIsActive = bluesToggle.classList.contains('active');
+                const bluesPattern = BLUES_NOTE_POSITIONS[patternKey];
+                caged_drawScale(selectedPattern, 'A', bluesIsActive, bluesPattern);
+            }
+            
             majorSelect.addEventListener('change', () => {
                 pentatonicSelect.value = ""; 
+                bluesToggle.classList.remove('active');
                 const selectedPattern = CAGED_MAJOR_PATTERNS[majorSelect.value];
                 caged_drawScale(selectedPattern, 'C');
             });
 
             pentatonicSelect.addEventListener('change', () => {
-                majorSelect.value = ""; 
-                const selectedPattern = CAGED_PENTATONIC_PATTERNS[pentatonicSelect.value];
-                caged_drawScale(selectedPattern, 'A');
+                majorSelect.value = "";
+                updatePentatonicScale();
+            });
+
+            bluesToggle.addEventListener('click', () => {
+                if (!pentatonicSelect.value) return; 
+                bluesToggle.classList.toggle('active');
+                updatePentatonicScale();
             });
         }
         
