@@ -1,0 +1,14 @@
+<!-- 1. CONFIGURAZIONE IMMAGINI -->
+    <script>
+        // =======================================================
+        // ==> CONFIGURAZIONE IMMAGINI SPLASH SCREEN <==
+        // Per cambiare le immagini, modifica solo i link qui sotto.
+        // =======================================================
+        const splashImages = [
+    'https://github.com/Fresko3000/chitarra-virtuale-assets/blob/main/guitar_angel%20(1).jpg?raw=true',
+    'https://github.com/Fresko3000/chitarra-virtuale-assets/blob/main/guitar_angel%20(1).png?raw=true',
+    'https://github.com/Fresko3000/chitarra-virtuale-assets/blob/main/guitar_angel%20(2).png?raw=true',
+    'https://github.com/Fresko3000/chitarra-virtuale-assets/blob/main/guitar_angel%20(3).png?raw=true',
+    'https://github.com/Fresko3000/chitarra-virtuale-assets/blob/main/guitar_angel%20(4).png?raw=true',
+        ];
+    </script>
