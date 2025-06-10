@@ -18,11 +18,7 @@
         .section.active { display: block; }
         .fretboard-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; }
         .fretboard { background: #fef3cd; padding: 20px 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); min-width: 950px; }
-        
-        /* MODIFICA PER BUG ANDROID: Rimozione padding e aggiunta spacer */
-        .fret-header { display: flex; margin-bottom: 8px; align-items: center;}
-        .fret-header-spacer { width: 58px; flex-shrink: 0; }
-        
+        .fret-header { display: flex; padding-left: 58px; margin-bottom: 8px; align-items: center;}
         .fret-number { flex: 1; text-align: center; font-size: 0.8rem; font-weight: bold; color: #4b5563; min-width: 60px; }
         .fret-number-highlight { font-weight: 950; font-size: 1.2rem; color: #1f2937; }
         .string-row { display: flex; align-items: center; margin-bottom: 12px; height: 32px; position: relative; }
@@ -266,7 +262,7 @@
         </div>
         
         <footer class="page-footer">
-            <p>v.6.3 | Designed by Fresko | Powered by AI | 2025</p>
+            <p>v.6.5 | Designed by Fresko | Powered by AI | 2025</p>
         </footer>
     </div>
 
@@ -333,7 +329,7 @@
         function generateProgression(){const o=document.getElementById("key-select").value,t=document.getElementById("style-select").value,e=progressionDatabase[t],n=notesInt.indexOf(o);let a=e.pattern;"random"===t&&(a=[],patternLength=4+Math.floor(2*Math.random()),degrees=Object.keys(progressionDatabase.random.pattern),Array.from({length:patternLength}).forEach(()=>{a.push(progressionDatabase.random.pattern[Math.floor(Math.random()*degrees.length)])}));const i=a.map(o=>{const t=o.replace(/m|5|7|°/g,"").toLowerCase(),e=o.substring(t.length),a=(n+degreeToInterval[t])%12;return notesInt[a]+e});document.getElementById("progression-chords").textContent=i.join(" - "),document.getElementById("progression-style").textContent=e.description,document.getElementById("progression-result").style.display="block"}
         function copyProgression(){const o=document.getElementById("progression-chords").textContent;navigator.clipboard.writeText(o).then(()=>{const o=document.getElementById("copy-button");o.textContent="Copiato!",setTimeout(()=>{o.textContent="Copia negli appunti"},2e3)})}
         
-        // --- LOGICA SCALE MODIFICATA ---
+        // --- LOGICA SCALE ---
         const CAGED_MAJOR_PATTERNS = { c_form_open: [ { s: 'E6', f: 0 }, { s: 'E6', f: 1 }, { s: 'E6', f: 3 }, { s: 'A', f: 0 }, { s: 'A', f: 2 }, { s: 'A', f: 3 }, { s: 'D', f: 0 }, { s: 'D', f: 2 }, { s: 'D', f: 3 }, { s: 'G', f: 0 }, { s: 'G', f: 2 }, { s: 'B', f: 0 }, { s: 'B', f: 1 }, { s: 'B', f: 3 }, { s: 'E1', f: 0 }, { s: 'E1', f: 1 }, { s: 'E1', f: 3 } ], a_form: [ { s: 'E6', f: 3 }, { s: 'E6', f: 5 }, { s: 'A', f: 2 }, { s: 'A', f: 3 }, { s: 'A', f: 5 }, { s: 'D', f: 2 }, { s: 'D', f: 3 }, { s: 'D', f: 5 }, { s: 'G', f: 2 }, { s: 'G', f: 4 }, { s: 'G', f: 5 }, { s: 'B', f: 3 }, { s: 'B', f: 5 }, { s: 'B', f: 6 }, { s: 'E1', f: 3 }, { s: 'E1', f: 5 } ], g_form: [ { s: 'E6', f: 5 }, { s: 'E6', f: 7 }, { s: 'E6', f: 8 }, { s: 'A', f: 5 }, { s: 'A', f: 7 }, { s: 'A', f: 8 }, { s: 'D', f: 5 }, { s: 'D', f: 7 }, { s: 'G', f: 4 }, { s: 'G', f: 5 }, { s: 'G', f: 7 }, { s: 'B', f: 5 }, { s: 'B', f: 6 }, { s: 'B', f: 8 }, { s: 'E1', f: 5 }, { s: 'E1', f: 7 }, { s: 'E1', f: 8 } ], e_form: [ { s: 'E6', f: 7 }, { s: 'E6', f: 8 }, { s: 'E6', f: 10 }, { s: 'A', f: 7 }, { s: 'A', f: 8 }, { s: 'A', f: 10 }, { s: 'D', f: 7 }, { s: 'D', f: 9 }, { s: 'D', f: 10 }, { s: 'G', f: 7 }, { s: 'G', f: 9 }, { s: 'G', f: 10 }, { s: 'B', f: 8 }, { s: 'B', f: 10 }, { s: 'E1', f: 7 }, { s: 'E1', f: 8 }, { s: 'E1', f: 10 } ], d_form: [ { s: 'E6', f: 10 }, { s: 'E6', f: 12 }, { s: 'E6', f: 13 }, { s: 'A', f: 10 }, { s: 'A', f: 12 }, { s: 'D', f: 9 }, { s: 'D', f: 10 }, { s: 'D', f: 12 }, { s: 'G', f: 9 }, { s: 'G', f: 10 }, { s: 'G', f: 12 }, { s: 'B', f: 10 }, { s: 'B', f: 12 }, { s: 'B', f: 13 }, { s: 'E1', f: 10 }, { s: 'E1', f: 12 }, { s: 'E1', f: 13 } ], c_form_octave: [ { s: 'E6', f: 12 }, { s: 'E6', f: 13 }, { s: 'E6', f: 15 }, { s: 'A', f: 12 }, { s: 'A', f: 14 }, { s: 'A', f: 15 }, { s: 'D', f: 12 }, { s: 'D', f: 14 }, { s: 'D', f: 15 }, { s: 'G', f: 12 }, { s: 'G', f: 14 }, { s: 'B', f: 12 }, { s: 'B', f: 13 }, { s: 'B', f: 15 }, { s: 'E1', f: 12 }, { s: 'E1', f: 13 }, { s: 'E1', f: 15 } ] };
         const CAGED_PENTATONIC_PATTERNS = {
             penta_e_form: [{s:"E6",f:5},{s:"E6",f:8},{s:"A",f:5},{s:"A",f:7},{s:"D",f:5},{s:"D",f:7},{s:"G",f:5},{s:"G",f:7},{s:"B",f:5},{s:"B",f:8},{s:"E1",f:5},{s:"E1",f:8}],
@@ -346,11 +342,18 @@
         function caged_createFretboard() {
             const root = document.getElementById('caged-fretboard-root');
             root.innerHTML = '';
-            const fretCount = 16;
+            const fretCount = 14; // Aumentato a 14 per visualizzare tutti i pattern
             const header = document.createElement('div');
             header.className = 'fret-header';
-            header.innerHTML = '<div class="fret-header-spacer"></div>';
-            for (let f = 1; f <= fretCount; f++) { const num = document.createElement('div'); num.className = 'fret-number'; if ([3, 5, 7, 9, 12, 15].includes(f)) num.classList.add('fret-number-highlight'); num.textContent = f; header.appendChild(num); }
+            for (let f = 1; f <= fretCount; f++) { 
+                const num = document.createElement('div');
+                num.className = 'fret-number';
+                if ([3, 5, 7, 9, 12].includes(f)) { // Manteniamo i vecchi highlight per coerenza
+                    num.classList.add('fret-number-highlight');
+                }
+                num.textContent = f;
+                header.appendChild(num);
+            }
             root.appendChild(header);
             strings.forEach((stringName, stringIndex) => { const stringRow = document.createElement('div'); stringRow.className = 'string-row'; const nameDiv = document.createElement('div'); nameDiv.className = 'string-name'; nameDiv.textContent = stringNames[stringIndex]; nameDiv.style.cursor = 'default'; nameDiv.id = `caged-string-name-${stringName}`; stringRow.appendChild(nameDiv); stringRow.appendChild(document.createElement('div')).className = 'nut'; for (let fretIndex = 1; fretIndex <= fretCount; fretIndex++) { const fretDiv = document.createElement('div'); fretDiv.className = 'fret'; fretDiv.style.cursor = 'default'; fretDiv.id = `caged-fret-${stringName}-${fretIndex}`; stringRow.appendChild(fretDiv); } root.appendChild(stringRow); });
         }
