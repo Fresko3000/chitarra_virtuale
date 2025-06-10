@@ -1,4 +1,4 @@
-# chitarra_virtuale
+# chitarra virtuale v6
 
 🎸 Chitarra Virtuale - Il Tuo Assistente Musicale
 Benvenuto in Chitarra Virtuale, un'applicazione web completa progettata per essere il compagno di studio ideale per ogni chitarrista, dal principiante all'esperto. Questa app, creata con HTML, CSS e JavaScript puro, racchiude in un unico posto tutti gli strumenti essenziali per esercitarsi, imparare e creare musica.
