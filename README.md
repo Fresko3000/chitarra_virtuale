@@ -37,6 +37,7 @@ Guida Integrata: Ogni sezione è accompagnata da una guida chiara e concisa che 
 
 
 **🛠️ Tecnologie Utilizzate**  
-HTML5: Per la struttura semantica dell'applicazione.
-CSS3: Per lo stile, il layout responsive e le transizioni fluide.
-JavaScript (Vanilla): Per tutta la logica interattiva, dal riconoscimento degli accordi alla generazione del suono tramite la Web Audio API.
+HTML5: Per la struttura semantica dell'applicazione.  
+CSS3: Per lo stile, il layout responsive e le transizioni fluide.  
+JavaScript (Vanilla): Per tutta la logica interattiva, dal riconoscimento degli accordi alla generazione del suono tramite la Web Audio API.  
+Gemini per la stesura del codice.
