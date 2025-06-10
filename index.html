@@ -18,7 +18,11 @@
         .section.active { display: block; }
         .fretboard-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; }
         .fretboard { background: #fef3cd; padding: 20px 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); min-width: 950px; }
-        .fret-header { display: flex; padding-left: 58px; margin-bottom: 8px; align-items: center;}
+        
+        /* MODIFICA PER BUG ANDROID: Rimozione padding e aggiunta spacer */
+        .fret-header { display: flex; margin-bottom: 8px; align-items: center;}
+        .fret-header-spacer { width: 58px; flex-shrink: 0; }
+        
         .fret-number { flex: 1; text-align: center; font-size: 0.8rem; font-weight: bold; color: #4b5563; min-width: 60px; }
         .fret-number-highlight { font-weight: 950; font-size: 1.2rem; color: #1f2937; }
         .string-row { display: flex; align-items: center; margin-bottom: 12px; height: 32px; position: relative; }
@@ -262,7 +266,7 @@
         </div>
         
         <footer class="page-footer">
-            <p>v.6.2 | Powered by AI | Designed by Fresko | 2025</p>
+            <p>v.6.3 | Designed by Fresko | Powered by AI | 2025</p>
         </footer>
     </div>
 
@@ -273,9 +277,8 @@
             'https://github.com/Fresko3000/chitarra-virtuale-assets/blob/main/guitar_angel%20(1).png?raw=true',
             'https://github.com/Fresko3000/chitarra-virtuale-assets/blob/main/guitar_angel%20(2).png?raw=true',
             'https://github.com/Fresko3000/chitarra-virtuale-assets/blob/main/guitar_angel%20(3).png?raw=true',
-            'https://github.com/Fresko3000/chitarra-virtuale-assets/blob_main/guitar_angel%20(4).png?raw=true',
+            'https://github.com/Fresko3000/chitarra-virtuale-assets/blob/main/guitar_angel%20(4).png?raw=true',
             'https://github.com/Fresko3000/chitarra-virtuale-assets/blob/main/guitar_angel%20(5).png?raw=true',
-
         ];
 
         // LOGICA SPLASH SCREEN
@@ -346,6 +349,7 @@
             const fretCount = 16;
             const header = document.createElement('div');
             header.className = 'fret-header';
+            header.innerHTML = '<div class="fret-header-spacer"></div>';
             for (let f = 1; f <= fretCount; f++) { const num = document.createElement('div'); num.className = 'fret-number'; if ([3, 5, 7, 9, 12, 15].includes(f)) num.classList.add('fret-number-highlight'); num.textContent = f; header.appendChild(num); }
             root.appendChild(header);
             strings.forEach((stringName, stringIndex) => { const stringRow = document.createElement('div'); stringRow.className = 'string-row'; const nameDiv = document.createElement('div'); nameDiv.className = 'string-name'; nameDiv.textContent = stringNames[stringIndex]; nameDiv.style.cursor = 'default'; nameDiv.id = `caged-string-name-${stringName}`; stringRow.appendChild(nameDiv); stringRow.appendChild(document.createElement('div')).className = 'nut'; for (let fretIndex = 1; fretIndex <= fretCount; fretIndex++) { const fretDiv = document.createElement('div'); fretDiv.className = 'fret'; fretDiv.style.cursor = 'default'; fretDiv.id = `caged-fret-${stringName}-${fretIndex}`; stringRow.appendChild(fretDiv); } root.appendChild(stringRow); });
@@ -374,13 +378,13 @@
             const pentatonicSelect = document.getElementById('caged-pentatonic-select');
 
             majorSelect.addEventListener('change', () => {
-                pentatonicSelect.value = ""; // Resetta l'altro menu
+                pentatonicSelect.value = ""; 
                 const selectedPattern = CAGED_MAJOR_PATTERNS[majorSelect.value];
                 caged_drawScale(selectedPattern, 'C');
             });
 
             pentatonicSelect.addEventListener('change', () => {
-                majorSelect.value = ""; // Resetta l'altro menu
+                majorSelect.value = ""; 
                 const selectedPattern = CAGED_PENTATONIC_PATTERNS[pentatonicSelect.value];
                 caged_drawScale(selectedPattern, 'A');
             });
