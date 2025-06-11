@@ -18,7 +18,7 @@
         .section { display: none; }
         .section.active { display: block; }
         .fretboard-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; }
-        .fretboard { background: #fef3cd; padding: 20px 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); min-width: 950px; }
+        .fretboard { background: #fef3cd; padding: 20px 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
         .fret-header { display: flex; padding-left: 58px; margin-bottom: 8px; align-items: center;}
         .fret-number { flex: 1; text-align: center; font-size: 0.8rem; font-weight: bold; color: #4b5563; min-width: 60px; }
         .fret-number-highlight { font-weight: 950; font-size: 1.2rem; color: #1f2937; }
@@ -299,7 +299,6 @@
         // SCRIPT PRINCIPALE APP
         const strings = ['E1', 'B', 'G', 'D', 'A', 'E6'];
         const stringNames = ['e', 'B', 'G', 'D', 'A', 'E'];
-        const frets = 12;
         const notesInt = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
         const notesIta = ['Do', 'Do#', 'Re', 'Re#', 'Mi', 'Fa', 'Fa#', 'Sol', 'Sol#', 'La', 'La#', 'Si'];
         const stringTuning = { 'E1': 4, 'B': 11, 'G': 7, 'D': 2, 'A': 9, 'E6': 4 };
@@ -317,9 +316,118 @@
         function detectChord() { const userNotes = Object.values(selectedNotes); if (userNotes.length === 0) return []; const uniqueUserNotes = new Set(userNotes.map(n => n.note)); if (uniqueUserNotes.size === 2) { const notes = Array.from(uniqueUserNotes), rootIndex = notesInt.indexOf(notes[0]), fifthIndex = (rootIndex + 7) % 12; if (notesInt[fifthIndex] === notes[1]) { const powerChord = chordDatabase[notes[0] + '5']; if (powerChord) return [powerChord]; } } const candidates = Object.values(chordDatabase).filter(chord => { if (chord.int.endsWith('5')) return false; for (const userNote of uniqueUserNotes) if (!chord.notes.includes(userNote)) return false; return true; }); candidates.sort((a, b) => { const diffA = a.notes.length - uniqueUserNotes.size, diffB = b.notes.length - uniqueUserNotes.size; if (diffA !== diffB) return diffA - diffB; return a.int.length - b.int.length; }); return candidates; }
         function generateTablature() { let tabLines = stringNames.map(name => `${name.padEnd(2)}|`); for(let i=0; i < strings.length; i++) { const stringName = strings[i]; if (selectedNotes[stringName] || selectedNotes[stringName] === 0) { const fret = selectedNotes[stringName].fret; tabLines[i] += `-${fret.toString().padStart(2, '-')}-|`; } else tabLines[i] += `----|`; } document.getElementById('tablature-content').innerHTML = tabLines.join('<br>'); }
         function autoComplete(chordIntName) { const voicing = standardVoicings[chordIntName]; if (!voicing) return; selectedNotes = {}; const keyMap = {'e': 'E1', 'B': 'B', 'G': 'G', 'D': 'D', 'A': 'A', 'E': 'E6'}; Object.entries(voicing).forEach(([stringKey, fret]) => { const internalName = Object.keys(keyMap).find(k => k === stringKey) || Object.keys(keyMap).find(k => keyMap[k] === stringKey); if(internalName) { const a = keyMap[internalName] || internalName; selectedNotes[a] = { fret, note: getNoteAtFret(a, fret) }; } }); updateAllVisuals(); }
-        function updateAllVisuals() { document.querySelectorAll('#fretboard-root .note-dot').forEach(dot => dot.remove()); document.querySelectorAll('#fretboard-root .fret.selected, #fretboard-root .string-name.selected').forEach(el => el.classList.remove('selected')); Object.entries(selectedNotes).forEach(([stringName, data]) => { const el = document.getElementById(`${stringName}-${data.fret}`); if (el) { el.classList.add('selected'); const dot = document.createElement('div'); dot.className = 'note-dot'; dot.textContent = data.note; el.appendChild(dot); } }); const displayArea = document.getElementById('chord-display-area'), tabChordName = document.getElementById('tablature-chord-name'), candidates = detectChord(), uniqueUserNotes = new Set(Object.values(selectedNotes).map(n => n.note)); let bestMatch = (candidates.length > 0) ? candidates[0] : null; if (bestMatch && uniqueUserNotes.size >=2) { const isExactMatch = bestMatch.notes.length === uniqueUserNotes.size; if (isExactMatch) { displayArea.innerHTML = `<div id="chord-result"><div class="chord-name"><span class="chord-international">${bestMatch.int}</span><span class="chord-separator">|</span><span class="chord-italian">${bestMatch.ita}</span></div></div>`; tabChordName.textContent = bestMatch.int; } else { const suggestionsHTML = candidates.slice(0, 4).map(c => `<div class="suggestion-tag" onclick="autoComplete('${c.int}')">${c.int}</div>`).join(''); displayArea.innerHTML = `<div class="suggestions-container">Forse cerchi: ➡️ <div class="suggestions-list">${suggestionsHTML}</div></div>`; tabChordName.textContent = ''; } } else { displayArea.innerHTML = `<div id="chord-result" class="no-chord">${uniqueUserNotes.size > 0 ? 'Nessun accordo corrispondente' : 'Seleziona le note'}</div>`; tabChordName.textContent = ''; } generateTablature(); const notesSection = document.getElementById('notes-section'), notesList = document.getElementById('notes-list'), chordActions = document.getElementById('chord-actions'), copyTabBtn = document.getElementById('copy-tab-button'); if (Object.keys(selectedNotes).length > 0) { notesSection.style.display = 'block'; chordActions.style.display = 'flex'; copyTabBtn.style.display = 'inline-block'; notesList.innerHTML = ''; uniqueUserNotes.forEach(note => { notesList.innerHTML += `<span class="note-tag">${note}</span>`; }); } else { notesSection.style.display = 'none'; chordActions.style.display = 'none'; copyTabBtn.style.display = 'none'; } }
+        
+        function updateAllVisuals() {
+            const containerId = 'fretboard-root';
+            document.querySelectorAll(`#${containerId} .note-dot`).forEach(dot => dot.remove());
+            document.querySelectorAll(`#${containerId} .fret.selected, #${containerId} .string-name.selected`).forEach(el => el.classList.remove('selected'));
+
+            Object.entries(selectedNotes).forEach(([stringName, data]) => {
+                const el = document.getElementById(`${containerId}-${stringName}-${data.fret}`);
+                if (el) {
+                    el.classList.add('selected');
+                    const dot = document.createElement('div');
+                    dot.className = 'note-dot';
+                    dot.textContent = data.note;
+                    el.appendChild(dot);
+                }
+            });
+
+            const displayArea = document.getElementById('chord-display-area'), tabChordName = document.getElementById('tablature-chord-name'), candidates = detectChord(), uniqueUserNotes = new Set(Object.values(selectedNotes).map(n => n.note));
+            let bestMatch = (candidates.length > 0) ? candidates[0] : null;
+
+            if (bestMatch && uniqueUserNotes.size >=2) {
+                const isExactMatch = bestMatch.notes.length === uniqueUserNotes.size;
+                if (isExactMatch) {
+                    displayArea.innerHTML = `<div id="chord-result"><div class="chord-name"><span class="chord-international">${bestMatch.int}</span><span class="chord-separator">|</span><span class="chord-italian">${bestMatch.ita}</span></div></div>`;
+                    tabChordName.textContent = bestMatch.int;
+                } else {
+                    const suggestionsHTML = candidates.slice(0, 4).map(c => `<div class="suggestion-tag" onclick="autoComplete('${c.int}')">${c.int}</div>`).join('');
+                    displayArea.innerHTML = `<div class="suggestions-container">Forse cerchi: ➡️ <div class="suggestions-list">${suggestionsHTML}</div></div>`;
+                    tabChordName.textContent = '';
+                }
+            } else {
+                displayArea.innerHTML = `<div id="chord-result" class="no-chord">${uniqueUserNotes.size > 0 ? 'Nessun accordo corrispondente' : 'Seleziona le note'}</div>`;
+                tabChordName.textContent = '';
+            }
+
+            generateTablature();
+            const notesSection = document.getElementById('notes-section'), notesList = document.getElementById('notes-list'), chordActions = document.getElementById('chord-actions'), copyTabBtn = document.getElementById('copy-tab-button');
+            if (Object.keys(selectedNotes).length > 0) {
+                notesSection.style.display = 'block';
+                chordActions.style.display = 'flex';
+                copyTabBtn.style.display = 'inline-block';
+                notesList.innerHTML = '';
+                uniqueUserNotes.forEach(note => {
+                    notesList.innerHTML += `<span class="note-tag">${note}</span>`;
+                });
+            } else {
+                notesSection.style.display = 'none';
+                chordActions.style.display = 'none';
+                copyTabBtn.style.display = 'none';
+            }
+        }
+
         function clearAll() { selectedNotes = {}; updateAllVisuals(); }
-        function createFretboard() { const root = document.getElementById('fretboard-root'); root.innerHTML = ''; const header = document.createElement('div'); header.className = 'fret-header'; for (let f = 1; f <= frets; f++) { const num = document.createElement('div'); num.className = 'fret-number'; if ([3, 5, 7, 9, 12].includes(f)) num.classList.add('fret-number-highlight'); num.textContent = f; header.appendChild(num); } root.appendChild(header); strings.forEach((stringName, stringIndex) => { const stringRow = document.createElement('div'); stringRow.className = 'string-row'; const nameDiv = document.createElement('div'); nameDiv.className = 'string-name'; nameDiv.id = `${stringName}-0`; nameDiv.textContent = stringNames[stringIndex]; nameDiv.addEventListener('click', () => toggleNote(stringName, 0)); stringRow.appendChild(nameDiv); stringRow.appendChild(document.createElement('div')).className = 'nut'; for (let fretIndex = 1; fretIndex <= frets; fretIndex++) { const fretDiv = document.createElement('div'); fretDiv.className = 'fret'; fretDiv.id = `${stringName}-${fretIndex}`; fretDiv.addEventListener('click', () => toggleNote(stringName, fretIndex)); stringRow.appendChild(fretDiv); } root.appendChild(stringRow); }); }
+
+        function renderFretboard(containerId, fretCount, isInteractive) {
+            const root = document.getElementById(containerId);
+            if (!root) return;
+            root.innerHTML = '';
+            
+            // Imposta dinamicamente la larghezza minima per garantire lo scroll corretto
+            const minWidth = (fretCount * 60) + 100; // 60px per tasto + ~100px per capotasto/padding
+            root.style.minWidth = `${minWidth}px`;
+
+            const header = document.createElement('div');
+            header.className = 'fret-header';
+            for (let f = 1; f <= fretCount; f++) {
+                const num = document.createElement('div');
+                num.className = 'fret-number';
+                if ([3, 5, 7, 9, 12, 15].includes(f)) {
+                    num.classList.add('fret-number-highlight');
+                }
+                num.textContent = f;
+                header.appendChild(num);
+            }
+            root.appendChild(header);
+
+            strings.forEach((stringName, stringIndex) => {
+                const stringRow = document.createElement('div');
+                stringRow.className = 'string-row';
+
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'string-name';
+                nameDiv.textContent = stringNames[stringIndex];
+                nameDiv.id = `${containerId}-${stringName}-0`;
+                stringRow.appendChild(nameDiv);
+
+                const nut = document.createElement('div');
+                nut.className = 'nut';
+                stringRow.appendChild(nut);
+
+                for (let fretIndex = 1; fretIndex <= fretCount; fretIndex++) {
+                    const fretDiv = document.createElement('div');
+                    fretDiv.className = 'fret';
+                    fretDiv.id = `${containerId}-${stringName}-${fretIndex}`;
+                    stringRow.appendChild(fretDiv);
+                }
+                root.appendChild(stringRow);
+                
+                if (isInteractive) {
+                    nameDiv.addEventListener('click', () => toggleNote(stringName, 0));
+                    for (let fretIndex = 1; fretIndex <= fretCount; fretIndex++) {
+                        document.getElementById(`${containerId}-${stringName}-${fretIndex}`).addEventListener('click', () => toggleNote(stringName, fretIndex));
+                    }
+                } else {
+                    nameDiv.style.cursor = 'default';
+                     for (let fretIndex = 1; fretIndex <= fretCount; fretIndex++) {
+                        document.getElementById(`${containerId}-${stringName}-${fretIndex}`).style.cursor = 'default';
+                    }
+                }
+            });
+        }
+
         function playChord() { const ctx = getAudioContext(), notesToPlay = Object.values(selectedNotes); if (notesToPlay.length === 0) return; const baseOctave = { E6: 2, A: 2, D: 3, G: 3, B: 3, E1: 4 }; notesToPlay.forEach((noteData, index) => { let stringName = Object.keys(selectedNotes)[index], octave = baseOctave[stringName], noteIndex = stringTuning[stringName] + noteData.fret; octave += Math.floor(noteIndex / 12); const noteNameWithOctave = noteData.note + octave, freq = noteFrequencies[noteNameWithOctave]; if (freq) { const osc = ctx.createOscillator(), gainNode = ctx.createGain(); osc.connect(gainNode); gainNode.connect(ctx.destination); osc.type = 'triangle'; osc.frequency.value = freq; gainNode.gain.setValueAtTime(0.3, ctx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.2); osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.2); } }); }
         function copyTablature() { const tabContent = document.getElementById('tablature-content').innerHTML, plainTextTab = tabContent.replace(/<br>/g, '\n').replace(/ /g, ' '); navigator.clipboard.writeText(plainTextTab).then(() => { const btn = document.getElementById('copy-tab-button'); btn.textContent = "Copiata!"; setTimeout(() => { btn.textContent = "Copia Tab"; }, 2000); }); }
         let metronomeInterval, isPlaying = false, beatCount = 0;
@@ -339,7 +447,6 @@
             penta_a_form: [{s:"E6",f:0},{s:"E6",f:3},{s:"A",f:0},{s:"A",f:3},{s:"D",f:0},{s:"D",f:2},{s:"G",f:0},{s:"G",f:2},{s:"B",f:1},{s:"B",f:3},{s:"E1",f:0},{s:"E1",f:3}],
             penta_g_form: [{s:"E6",f:3},{s:"E6",f:5},{s:"A",f:3},{s:"A",f:5},{s:"D",f:2},{s:"D",f:5},{s:"G",f:2},{s:"G",f:5},{s:"B",f:3},{s:"B",f:5},{s:"E1",f:3},{s:"E1",f:5}]
         };
-
         const BLUES_NOTE_POSITIONS = {
             penta_e_form: [{s: "A", f: 6}, {s: "G", f: 8}],
             penta_d_form: [{s: "E1", f: 11}, {s: "G", f: 8}, {s: "E6", f: 11}],
@@ -348,50 +455,14 @@
             penta_g_form: [{s: "B", f: 4}, {s: "A", f: 6}]
         };
         
-        function caged_createFretboard() {
-            const root = document.getElementById('caged-fretboard-root');
-            root.innerHTML = '';
-            const fretCount = 15; 
-            const header = document.createElement('div');
-            header.className = 'fret-header';
-            for (let f = 1; f <= fretCount; f++) { 
-                const num = document.createElement('div');
-                num.className = 'fret-number';
-                if ([3, 5, 7, 9, 12].includes(f)) { 
-                    num.classList.add('fret-number-highlight');
-                }
-                num.textContent = f;
-                header.appendChild(num);
-            }
-            root.appendChild(header);
-            strings.forEach((stringName, stringIndex) => { 
-                const stringRow = document.createElement('div'); 
-                stringRow.className = 'string-row'; 
-                const nameDiv = document.createElement('div'); 
-                nameDiv.className = 'string-name'; 
-                nameDiv.textContent = stringNames[stringIndex]; 
-                nameDiv.style.cursor = 'default'; 
-                nameDiv.id = `caged-string-name-${stringName}`; 
-                stringRow.appendChild(nameDiv); 
-                stringRow.appendChild(document.createElement('div')).className = 'nut'; 
-                for (let fretIndex = 1; fretIndex <= fretCount; fretIndex++) { 
-                    const fretDiv = document.createElement('div'); 
-                    fretDiv.className = 'fret'; 
-                    fretDiv.style.cursor = 'default'; 
-                    fretDiv.id = `caged-fret-${stringName}-${fretIndex}`; 
-                    stringRow.appendChild(fretDiv); 
-                } 
-                root.appendChild(stringRow); 
-            });
-        }
-        
         function caged_drawScale(pattern, rootNote, showBluesNote = false, bluesPattern = null) {
-            document.querySelectorAll('#caged-fretboard-root .scale-dot').forEach(dot => dot.remove());
+            const containerId = 'caged-fretboard-root';
+            document.querySelectorAll(`#${containerId} .scale-dot`).forEach(dot => dot.remove());
             if (!pattern) return;
             
             const drawNote = (note, isBlueNote = false) => {
                 const { s: stringName, f: fretNumber } = note;
-                const targetElement = (fretNumber === 0) ? document.getElementById(`caged-string-name-${stringName}`) : document.getElementById(`caged-fret-${stringName}-${fretNumber}`);
+                const targetElement = document.getElementById(`${containerId}-${stringName}-${fretNumber}`);
                 if (targetElement) {
                     const dot = document.createElement('div');
                     dot.className = 'scale-dot';
@@ -415,7 +486,7 @@
         }
         
         function caged_setup() {
-            caged_createFretboard();
+            renderFretboard('caged-fretboard-root', 15, false);
             const majorSelect = document.getElementById('caged-major-select');
             const pentatonicSelect = document.getElementById('caged-pentatonic-select');
             const bluesToggle = document.getElementById('blues-note-toggle');
@@ -423,7 +494,7 @@
             function updatePentatonicScale() {
                 const patternKey = pentatonicSelect.value;
                 if (!patternKey) {
-                    caged_drawScale(null);
+                    caged_drawScale(null, 'A');
                     return;
                 }
                 const selectedPattern = CAGED_PENTATONIC_PATTERNS[patternKey];
@@ -454,10 +525,15 @@
         function setupNavigation(){const o=document.querySelectorAll(".nav-link");o.forEach(t=>{t.addEventListener("click",e=>{e.preventDefault(),o.forEach(o=>o.classList.remove("active")),t.classList.add("active"),document.querySelectorAll(".section").forEach(o=>{o.classList.remove("active")}),document.getElementById(t.getAttribute("data-section")).classList.add("active")})})}
 
         document.addEventListener('DOMContentLoaded', () => {
-            populateChordDatabase(); createFretboard(); updateAllVisuals();
+            populateChordDatabase(); 
+            renderFretboard('fretboard-root', 12, true); 
+            updateAllVisuals();
             document.getElementById('play-chord-button').addEventListener('click', playChord);
-            document.getElementById('bpm-slider').addEventListener('input', updateBpmValue); document.getElementById('play-button').addEventListener('click', toggleMetronome); updateBpmValue();
-            document.getElementById('generate-button').addEventListener('click', generateProgression); document.getElementById('copy-button').addEventListener('click', copyProgression);
+            document.getElementById('bpm-slider').addEventListener('input', updateBpmValue); 
+            document.getElementById('play-button').addEventListener('click', toggleMetronome); 
+            updateBpmValue();
+            document.getElementById('generate-button').addEventListener('click', generateProgression); 
+            document.getElementById('copy-button').addEventListener('click', copyProgression);
             caged_setup();
             setupNavigation();
         });
