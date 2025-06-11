@@ -16,24 +16,25 @@ Riconoscimento Istantaneo: L'algoritmo rileverà l'accordo corrispondente, mostr
 Suggerimenti Intelligenti: Se le note selezionate possono appartenere a più accordi, l'app ti suggerirà le opzioni più probabili.
 Funzioni Audio e Tab: Ascolta il suono dell'accordo che hai creato e copia la sua tablatura con un solo click.
 
-**3. 🎵 Metronomo**  
+**2. 🎵 Metronomo**  
 Sviluppa un tempo solido e preciso con un metronomo semplice ma efficace.
 BPM Regolabile: Usa lo slider per impostare la velocità da 40 a 220 BPM.
 Accento sul Primo Battito: Il metronomo è impostato su un tempo di 4/4 e accentua il primo battito di ogni misura, aiutandoti a non perdere mai il ritmo.
 
 
-**5. 🎶 Generatore di Progressioni**  
+**3. 🎶 Generatore di Progressioni**  
 A corto di idee? Vuoi esercitarti su nuovi giri armonici?
 Tonalità e Stile: Scegli una tonalità e uno stile musicale (Pop, Rock, Blues, Jazz e altri).
 Ispirazione Immediata: Genera istantaneamente progressioni di accordi classiche e tipiche del genere scelto, oppure creane una completamente casuale per una sfida in più.
 Copia e Incolla: Salva la progressione generata negli appunti per usarla dove vuoi.
 
 
-**7. 🎸 Visualizzatore di Scale (Sistema CAGED)**  
-Impara a dominare il manico della chitarra con questo potente strumento di visualizzazione.
-Scala Maggiore di DO: Studia le 5 posizioni (box) della scala di Do Maggiore, il fondamento del sistema CAGED.
-Pentatonica di LA Minore: Visualizza i 5 pattern della scala più importante per il rock e il blues.
-Guida Integrata: Ogni sezione è accompagnata da una guida chiara e concisa che spiega i concetti teorici (cos'è il CAGED, cos'è la pentatonica, la minore relativa) e come interpretare i diagrammi.
+**4. 🎸 Visualizzatore di Scale (Sistema CAGED)**  
+Impara a dominare il manico della chitarra con questo potente strumento di studio interattivo.  
+**Scala Maggiore di DO**: Studia le 5 posizioni (box) della scala di Do Maggiore, il fondamento del sistema CAGED. Essenziale per capire la struttura della tastiera.  
+**Pentatonica di LA Minore**: Visualizza i 5 pattern della scala più importante per il rock e il blues. La base per ogni assolo che si rispetti.  
+**Modalità Blues**: Con un solo click sul pulsante "Aggiungi un po' di Blues", puoi aggiungere la "blue note" (la quinta diminuita) a ogni pattern della pentatonica, trasformandola istantaneamente nella scala blues.  
+**Guida Integrata**: Ogni sezione è accompagnata da una guida chiara e concisa che spiega i concetti teorici (cos'è il CAGED, la pentatonica, la minore relativa e la blue note) e come interpretare i diagrammi.  
 
 
 **🛠️ Tecnologie Utilizzate**  
